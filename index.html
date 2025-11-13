@@ -151,7 +151,7 @@
       margin: 0.25rem 0;
       cursor: pointer;
     }
-    #btn-submit, #btn-reset {
+    #btn-submit, #btn-reset, #btn-download-cert {
       display: inline-block;
       padding: 0.7rem 1.5rem;
       border-radius: 999px;
@@ -170,6 +170,12 @@
       color: #0b4f6c;
       border: 1px solid #0b4f6c;
       font-size: 0.9rem;
+    }
+    #btn-download-cert {
+      background: #1b5e20;
+      color: #fff;
+      font-size: 0.95rem;
+      display: none; /* oculto hasta aprobar nivel 3 */
     }
     #btn-submit[disabled] {
       background: #b0bec5;
@@ -234,6 +240,8 @@
 
     <button id="btn-submit" type="button" disabled>Calificar nivel</button>
     <button id="btn-reset" type="button" disabled>Reiniciar nivel</button>
+    <!-- NUEVO: botón para descargar certificado -->
+    <button id="btn-download-cert" type="button">Descargar certificado PDF</button>
 
     <div id="result"></div>
   </main>
@@ -257,6 +265,7 @@
     const form = document.getElementById("quiz-form");
     const btnSubmit = document.getElementById("btn-submit");
     const btnReset = document.getElementById("btn-reset");
+    const btnDownloadCert = document.getElementById("btn-download-cert");
     const resultDiv = document.getElementById("result");
     const timerDiv = document.getElementById("timer");
     const levelPanel = document.getElementById("level-panel");
@@ -394,13 +403,13 @@
         options: [
           "No se toma ninguna y se debe Cargar normalmente",
           "1 temperatura, con eso se garantiza el proceso",
-          "3 temperaturas, Temperatura 1: con pistola termica, temperatura 2: con termocupla calibrada, temperatura 3: monitor de rayos infrarrojos",
-          "Se deben Marcar como fríos y realizar cebado"
+          "3 temperaturas, Temperatura 1: con pistola térmica, temperatura 2: con termocupla calibrada, temperatura 3: monitor de rayos infrarrojos",
+          "Se deben marcar como fríos y realizar cebado"
         ],
         correct: 2,
         explanation: "Deben tomarse 3 temperaturas según el protocolo."
       },
-      // Nuevas F/V para nivel 1
+      // Nuevas F/V nivel 1
       {
         text: "¿Se debe contar con el procedimiento y estándares (Cargue de Pozos – PRO-PD-PV-V003) para la actividad?",
         options: ["Verdadero", "Falso"],
@@ -436,6 +445,62 @@
         options: ["Verdadero", "Falso"],
         correct: 0,
         explanation: "La comunicación con APS y los grupos involucrados es obligatoria en estas tareas."
+      },
+      // === NUEVAS PREGUNTAS NIVEL 1 ===
+      {
+        text: "¿Cómo debe ser la nomenclatura de la estaca en pozos calientes? Selecciona la opción que contiene toda la información correcta.",
+        options: [
+          "Solo número de pozo.",
+          "Una cara: fila y número de pozo; otra cara: T1, T2, T3 (según mediciones realizadas).",
+          "Solo T1, T2, T3.",
+          "Solo el nombre del operador."
+        ],
+        correct: 1,
+        explanation: "La estaca debe indicar fila y número de pozo en una cara, y T1, T2, T3 en la otra cara según las mediciones."
+      },
+      {
+        text: "En el Procedimiento de cargue para pozos calientes NO se debe:",
+        options: [
+          "Cargar pozos con temperatura superior a 70 °C.",
+          "Medir la temperatura antes del cargue.",
+          "Identificar pozos con cintas de colores.",
+          "Registrar mediciones en BlastiQ."
+        ],
+        correct: 0,
+        explanation: "Está prohibido cargar pozos con temperatura superior a 70 °C según el procedimiento."
+      },
+      {
+        text: "¿Para qué rango de temperatura de pozos aplica el Procedimiento de cargue en caliente?",
+        options: [
+          "Menor de 40 °C.",
+          "De 40.1 °C a 45 °C.",
+          "Entre 45.1 °C y 70 °C.",
+          "Mayor de 80 °C."
+        ],
+        correct: 2,
+        explanation: "El procedimiento de cargue en caliente aplica para pozos entre 45.1 °C y 70 °C."
+      },
+      {
+        text: "¿Cuál es el rango de operación seguro de los accesorios (booster, cordón detonante y emulsión)?",
+        options: [
+          "Hasta 50 °C.",
+          "Hasta 60 °C.",
+          "Hasta 70 °C.",
+          "No tienen límite de temperatura."
+        ],
+        correct: 2,
+        explanation: "Los accesorios están diseñados para operar de forma segura hasta 70 °C."
+      },
+      {
+        text: "Relaciona el rango de temperatura con la forma correcta de tapar los barrenos (selecciona la opción que muestra la relación correcta).",
+        options: [
+          "<40 °C: tapar con tapabarreno según diseño; 40.1–45 °C: tapar con tapabarreno dos metros de material; 45.1–55 °C: tapar con tapabarreno un metro de material; 55.1–70 °C: tapar con 1 metro de material tapado con pala.",
+          "<40 °C: tapar con 1 metro de material; 40.1–45 °C: no tapar; 45.1–55 °C: tapar con 2 metros; 55.1–70 °C: no se tapa.",
+          "Todos los rangos se tapan igual con 50 cm de material.",
+          "Solo se tapan los pozos mayores de 70 °C."
+        ],
+        correct: 0,
+        explanation: "Esa opción refleja el criterio correcto de tapado según el rango de temperatura."
       }
     ];
 
@@ -587,6 +652,84 @@
         options: ["Verdadero", "Falso"],
         correct: 0,
         explanation: "La identificación con estacas y cintas de colores es obligatoria según el procedimiento."
+      },
+      // === NUEVAS PREGUNTAS NIVEL 2 ===
+      {
+        text: "Selecciona la opción que contiene correctamente las justificaciones para aplicar el Protocolo de Pruebas en Pozos Calientes.",
+        options: [
+          "Solo incrementar el porcentaje de área volada en zonas con pozos calientes.",
+          "Mejorar las condiciones de salud y seguridad de los operadores al optimizar la fragmentación en material caliente y reducir daños a equipos asociados al cargue y producción en zonas de alta temperatura.",
+          "Solo reducir daños a equipos asociados al cargue y producción.",
+          "Solo mejorar la productividad sin tener en cuenta la seguridad."
+        ],
+        correct: 1,
+        explanation: "Las justificaciones son mejorar salud y seguridad de los operadores y reducir daños a equipos."
+      },
+      {
+        text: "¿Cuáles son los riesgos generales en el proceso de cargue en pozos calientes? Selecciona la opción que contenga los riesgos mencionados.",
+        options: [
+          "Detonación imprevista de un pozo cargado debido a temperaturas elevadas y cargue de pozos por encima del límite permitido (>70 °C).",
+          "Únicamente el ruido generado por el disparo.",
+          "Solo el desgaste de las mangueras.",
+          "Ningún riesgo adicional."
+        ],
+        correct: 0,
+        explanation: "Los riesgos clave son la detonación imprevista por alta temperatura y el cargue por encima de 70 °C."
+      },
+      {
+        text: "Para aplicar el Procedimiento de cargue para pozos calientes, ¿qué se debe realizar? Selecciona la opción que reúne los pasos correctos.",
+        options: [
+          "Solo medir la temperatura de algunos pozos.",
+          "Manejo Integral del Cambio (MIC) en el sistema, medir la temperatura del 100 % de los pozos y calibrar y verificar según procedimiento los equipos de medición (termocuplas, pistolas infrarrojas, dispositivos MK8).",
+          "Solo calibrar los equipos de medición.",
+          "Solo hacer MIC sin medir temperatura."
+        ],
+        correct: 1,
+        explanation: "Se debe realizar MIC, medir 100 % de los pozos y verificar calibración de equipos."
+      },
+      {
+        text: "¿Quiénes deberán validar las mediciones, la correcta señalización y el cargue de los pozos calientes?",
+        options: [
+          "El operador del camión únicamente.",
+          "El topógrafo de turno.",
+          "El líder del área y el líder de tabla.",
+          "El personal de mantenimiento."
+        ],
+        correct: 2,
+        explanation: "El líder del área y el líder de tabla deben validar mediciones, señalización y cargue."
+      },
+      {
+        text: "En el Registro y Monitoreo de Temperatura, ¿qué se debe registrar?",
+        options: [
+          "Solo la temperatura mínima.",
+          "Solo la hora del disparo.",
+          "Registrar la temperatura máxima alcanzada y la hora exacta de la medición final en BlastiQ.",
+          "Solo el nombre del supervisor."
+        ],
+        correct: 2,
+        explanation: "Se debe registrar la temperatura máxima y la hora exacta de la medición final en BlastiQ."
+      },
+      {
+        text: "En el Registro y Monitoreo de Temperatura, ¿cuáles son las mediciones y los tiempos requeridos? Selecciona la opción correcta.",
+        options: [
+          "Una sola medición el día del disparo.",
+          "Primera medición con pistola térmica o termosonda hasta 24 horas antes; segunda medición con termosonda 12 horas antes; tercera medición con monitor MK8 el mismo día del disparo.",
+          "Solo mediciones con termosonda sin tiempos definidos.",
+          "Solo una medición con MK8 después del disparo."
+        ],
+        correct: 1,
+        explanation: "Se requieren tres mediciones en tiempos definidos: 24 h, 12 h y el mismo día del disparo."
+      },
+      {
+        text: "Relaciona cada rango de temperatura con el color de cinta que aplique (selecciona la opción que muestra la relación correcta).",
+        options: [
+          "45.1–55 °C: cinta roja; 55.1–70 °C: cinta roja con blanco; >70.1 °C: cinta azul con blanco.",
+          "45.1–55 °C: cinta azul con blanco; 55.1–70 °C: cinta roja; >70.1 °C: cinta roja con blanco.",
+          "Todos los rangos usan cinta roja.",
+          "Solo los pozos fríos usan cinta azul con blanco."
+        ],
+        correct: 0,
+        explanation: "Esa es la relación correcta entre rango de temperatura y color de cinta."
       }
     ];
 
@@ -608,7 +751,7 @@
         options: [
           "Sin cordón detonante",
           "Solo con nonel",
-          "Cargar primero con emulsión y luego Cebar con cordón detonante y booster con doble lastre",
+          "Cargar primero con emulsión y luego cebar con cordón detonante y booster con doble lastre",
           "No se usa Top Prime"
         ],
         correct: 2,
@@ -628,7 +771,7 @@
       {
         text: "En el rango 55.1 a 70 °C, ¿cómo se debe tapar el barreno?",
         options: [
-          "Con 1 metro de material de tapado con pala para proteger el cordon detonante de algún corte",
+          "Con 1 metro de material de tapado con pala para proteger el cordón detonante de algún corte",
           "No se tapa",
           "Con 10 cm de material",
           "Con agua"
@@ -762,7 +905,6 @@
         correct: 2,
         explanation: "El flujograma indica reportar a la central de información, base 1 y supervisor de turno."
       },
-      // === Nuevas preguntas añadidas ===
       {
         text: "¿Debo tener claro dónde es el punto de encuentro en caso de una emergencia?",
         options: ["Verdadero", "Falso"],
@@ -785,6 +927,29 @@
         ],
         correct: 2,
         explanation: "Se debe usar la temperatura mayor registrada para aplicar correctamente las restricciones del protocolo."
+      },
+      // === NUEVAS PREGUNTAS NIVEL 3 ===
+      {
+        text: "En el acompañamiento, ¿quién es el encargado de la medición de la temperatura #3 y garante de la verificación y funcionamiento del dispositivo de medición MK8 de rayos infrarrojos?",
+        options: [
+          "El operador del camión de explosivos.",
+          "El topógrafo.",
+          "El personal QA/QC.",
+          "El conductor del vehículo liviano."
+        ],
+        correct: 2,
+        explanation: "El personal QA/QC es responsable de la tercera medición con el monitor MK8 y de su verificación."
+      },
+      {
+        text: "En el cargue en áreas calientes, ¿quién es el responsable de garantizar la ejecución de los controles durante toda la tarea?",
+        options: [
+          "Cualquier operador presente en el frente.",
+          "Debe estar supervisado en todo momento por el supervisor de perforación y voladura.",
+          "Solo el jefe de turno.",
+          "El personal de mantenimiento mecánico."
+        ],
+        correct: 1,
+        explanation: "El supervisor de perforación y voladura es el responsable de garantizar la ejecución de los controles."
       }
     ];
 
@@ -1026,6 +1191,9 @@
         return;
       }
 
+      // Ocultamos el botón de certificado al iniciar cualquier nivel
+      btnDownloadCert.style.display = "none";
+
       currentLevel = level;
       resultDiv.textContent = "";
 
@@ -1107,13 +1275,14 @@
             `Nivel ${currentLevel}: Aprobado con ${score} de ${total} preguntas correctas. ` +
             `Felicidades ${nameVal}, has superado con éxito los tres niveles del examen.`;
 
-          const idVal = userIdInput.value.trim();
-          generateCertificatePDF(nameVal, idVal);
+          // Mostrar botón para descargar certificado
+          btnDownloadCert.style.display = "inline-block";
         }
       } else {
         resultDiv.textContent =
           `Nivel ${currentLevel}: NO aprobado. Obtuviste ${score} de ${total}. ` +
           `Debes responder correctamente las ${total} preguntas (100%) para desbloquear el siguiente nivel.`;
+        btnDownloadCert.style.display = "none";
       }
 
       renderLevelPanel();
@@ -1131,7 +1300,15 @@
       enableFormInputs();
       btnSubmit.disabled = false;
       resultDiv.textContent = "";
+      btnDownloadCert.style.display = "none";
       startTimer();
+    });
+
+    // Evento botón descargar certificado
+    btnDownloadCert.addEventListener("click", () => {
+      const nameVal = userNameInput.value.trim() || "Participante";
+      const idVal = userIdInput.value.trim() || "N/A";
+      generateCertificatePDF(nameVal, idVal);
     });
 
     // Render inicial (panel vacío hasta login, pero estructurado)
@@ -1140,4 +1317,5 @@
   </script>
 </body>
 </html>
+
 
