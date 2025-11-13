@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Examen – Test de Protocolo de cargue en Barrenos con Temperatura Cerrejón</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background: #0b4f6c;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      max-width: 960px;
+      margin: 1rem auto 3rem;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .intro {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    #user-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      background: #f0f4f8;
+      border: 1px solid #dde3ea;
+      font-size: 0.9rem;
+    }
+    #user-info label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    #user-info input {
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #b0bec5;
+      font-size: 0.9rem;
+    }
+
+    /* === NUEVO: zona de login === */
+    #login-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 0.5rem 0 1rem;
+    }
+    #btn-login {
+      padding: 0.45rem 1.2rem;
+      border-radius: 999px;
+      border: none;
+      background: #0b4f6c;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    #login-status {
+      font-size: 0.85rem;
+    }
+    #login-status.ok {
+      color: #1b5e20;
+    }
+    #login-status.error {
+      color: #b71c1c;
+    }
+    /* === FIN NUEVO === */
+
+    #level-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .level-card {
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e0e0e0;
+      background: #fafafa;
+    }
+    .level-card h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
+    }
+    .level-status {
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+    }
+    .badge-locked {
+      background: #ffebee;
+      color: #b71c1c;
+    }
+    .badge-open {
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+    .badge-done {
+      background: #e3f2fd;
+      color: #0d47a1;
+    }
+    .btn-level {
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #0b4f6c;
+      color: #fff;
+    }
+    .btn-level[disabled] {
+      background: #b0bec5;
+      cursor: not-allowed;
+    }
+    #timer {
+      font-weight: bold;
+      margin: 0.5rem 0 1rem;
+      font-size: 0.95rem;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+      background: #fafafa;
+    }
+    .question h3 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+    .options label {
+      display: block;
+      margin: 0.25rem 0;
+      cursor: pointer;
+    }
+    #btn-submit, #btn-reset {
+      display: inline-block;
+      padding: 0.7rem 1.5rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      margin-right: 0.4rem;
+    }
+    #btn-submit {
+      background: #0b4f6c;
+      color: #fff;
+    }
+    #btn-reset {
+      background: #fff;
+      color: #0b4f6c;
+      border: 1px solid #0b4f6c;
+      font-size: 0.9rem;
+    }
+    #btn-submit[disabled] {
+      background: #b0bec5;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 1rem;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .correct {
+      border-color: #4caf50;
+      background: #e8f5e9;
+    }
+    .incorrect {
+      border-color: #f44336;
+      background: #ffebee;
+    }
+    .explanation {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Test Protocolo de cargue en Barrenos Calientes</h1>
+    <p>Rangos de temperatura, restricciones de cargue y colores de cinta.</p>
+  </header>
+
+  <main>
+    <div id="user-info">
+      <label>
+        Nombre completo:
+        <input type="text" id="user-name" placeholder="Ej: Juan Pérez" />
+      </label>
+      <label>
+        Cédula:
+        <input type="text" id="user-id" placeholder="Ej: 1234567890" />
+      </label>
+    </div>
+
+    <!-- NUEVO: zona de login -->
+    <div id="login-actions">
+      <button id="btn-login" type="button">Validar acceso</button>
+      <span id="login-status"></span>
+    </div>
+
+    <p class="intro">
+      El examen está dividido en <strong>3 niveles</strong>. Cada nivel tiene <strong>10 preguntas</strong> y
+      un temporizador de <strong>10 minutos</strong>. Para desbloquear cada nivel debes responder
+      <strong>todas las preguntas correctamente (10 de 10 – 100%)</strong>.
+      Cada vez que inicies un nivel, las preguntas se seleccionan aleatoriamente de un banco de preguntas.
+    </p>
+
+    <!-- Inicialmente oculto hasta validar cédula -->
+    <div id="level-panel" style="display:none;"></div>
+
+    <div id="timer">Ingresa tu nombre, cédula y valida el acceso para iniciar.</div>
+
+    <form id="quiz-form"></form>
+
+    <button id="btn-submit" type="button" disabled>Calificar nivel</button>
+    <button id="btn-reset" type="button" disabled>Reiniciar nivel</button>
+
+    <div id="result"></div>
+  </main>
+
+  <!-- jsPDF para generar el certificado PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    // ===== CONFIGURACIÓN GENERAL =====
+    const LEVEL_TIME_SECONDS = 600; // 10 minutos por nivel
+    const QUESTIONS_PER_LEVEL = 10;
+    const MIN_PASS_RATIO = 1.0;     // 100% para aprobar
+
+    let currentLevel = null;
+    let timerInterval = null;
+    let remainingSeconds = LEVEL_TIME_SECONDS;
+    let passedLevels = {1: false, 2: false, 3: false};
+    let levelResults = {1: null, 2: null, 3: null};
+    let currentQuestions = []; // preguntas seleccionadas para el intento actual del nivel
+
+    const form = document.getElementById("quiz-form");
+    const btnSubmit = document.getElementById("btn-submit");
+    const btnReset = document.getElementById("btn-reset");
+    const resultDiv = document.getElementById("result");
+    const timerDiv = document.getElementById("timer");
+    const levelPanel = document.getElementById("level-panel");
+    const userNameInput = document.getElementById("user-name");
+    const userIdInput = document.getElementById("user-id");
+
+    const btnLogin = document.getElementById("btn-login");
+    const loginStatusSpan = document.getElementById("login-status");
+
+    // ===== LOGIN POR CÉDULA =====
+    // Agrega aquí las cédulas autorizadas para realizar el test
+    const allowedIds = [
+      "77096508",
+      "1122397608",
+      "1103108971",
+      "1121299707",
+      "1122410330",
+      "1122811651",
+      "12567764",
+      "17956473",
+      "17957519",
+      "26988893",
+      "5264895",
+      "5166017",
+      "56074933",
+      "84101819",
+      // agrega más cédulas aquí
+    ];
+    let isAuthenticated = false;
+
+    // ===== BANCO DE PREGUNTAS POR NIVEL =====
+    // Nivel 1 – Banco
+    const level1Bank = [
+      {
+        text: "En el rango menor a 40 °C, ¿cómo se considera el tipo de terreno?",
+        options: [
+          "No reactivo",
+          "Altamente reactivo",
+          "Críticamente caliente",
+          "No apto para perforación"
+        ],
+        correct: 0,
+        explanation: "Por debajo de 40 °C el terreno se considera no reactivo."
+      },
+      {
+        text: "Para temperaturas menores de 40 °C, ¿cómo se debe realizar el cargue?",
+        options: [
+          "No se puede cargar",
+          "Cargar solo con ANFO",
+          "Cargar normalmente según diseño, incluidos accesorios",
+          "Cargar únicamente con Top Prime"
+        ],
+        correct: 2,
+        explanation: "En terreno no reactivo se permite el cargue normal según diseño."
+      },
+      {
+        text: "En el rango 40.1 a 45 °C, ¿qué debe hacerse con los pozos antes del cargue?",
+        options: [
+          "No medir temperatura",
+          "Medir con pistola térmica y termocupla calibrada",
+          "Tapar y no cargar",
+          "Cargar de inmediato"
+        ],
+        correct: 1,
+        explanation: "Entre 40.1 y 45 °C se debe monitorear con pistola térmica y termocupla calibrada."
+      },
+      {
+        text: "En el rango 40.1 a 45 °C, ¿cuándo se debe iniciar el cargue?",
+        options: [
+          "24 horas antes del disparo",
+          "12 horas antes, en operación nocturna",
+          "Solo el mismo día del disparo",
+          "Una semana antes"
+        ],
+        correct: 1,
+        explanation: "El protocolo indica iniciar el cargue 12 horas antes (operación nocturna)."
+      },
+      {
+        text: "En el rango 40.1 a 45 °C, ¿quién figura como responsable clave acompañando la tarea?",
+        options: [
+          "Operador de pala",
+          "Supervisor de mantenimiento mecánico",
+          "Coordinador líder de tarea y Supervisor MPT en la tarea",
+          "Conductor del camión"
+        ],
+        correct: 2,
+        explanation: "Se menciona coordinador líder de la tarea y Supervisor MPT en la tarea."
+      },
+      {
+        text: "En el rango 40.1 a 45 °C, ¿qué se indica respecto al tapado del barreno?",
+        options: [
+          "No es necesario tapar",
+          "Tapar solo con tierra suelta",
+          "Tapar seguro según diseño usando tapabarreno y material de tapado",
+          "Tapar con concreto"
+        ],
+        correct: 2,
+        explanation: "Debe taparse de forma segura según diseño, usando tapabarreno y material."
+      },
+      {
+        text: "¿Qué temperatura se debe considerar para definir el tratamiento de los pozos en la Voladura?",
+        options: [
+          "Solo la temperatura ambiente",
+          "Solo la temperatura del explosivo",
+          "La temperatura interna del barreno",
+          "La temperatura del camión de explosivos"
+        ],
+        correct: 2,
+        explanation: "Se debe considerar la temperatura interna del barreno, que puede ser mayor a la ambiente."
+      },
+      {
+        text: "¿Cuál es el propósito principal de las estacas con cinta de colores en los barrenos con temperatura?",
+        options: [
+          "Decoración de los frentes de carga",
+          "Identificar el operador encargado del pozo",
+          "Señalizar visualmente el rango de temperatura y las restricciones de cargue",
+          "Indicar la profundidad del barreno"
+        ],
+        correct: 2,
+        explanation: "Las cintas de colores permiten identificar de inmediato el rango de temperatura y restricciones."
+      },
+      {
+        text: "¿Por qué es importante medir el 100% de la temperatura de los pozos a cargar?",
+        options: [
+          "Para cumplir un requisito administrativo",
+          "Para asegurar que todos los pozos se encuentran dentro del rango permitido de temperatura",
+          "Para contar el número de pozos",
+          "Para ahorrar explosivo"
+        ],
+        correct: 1,
+        explanation: "Medir todos los pozos garantiza que ninguno supere los rangos permitidos para el cargue."
+      },
+      {
+        text: "De acuerdo con las buenas prácticas de seguridad, ¿Cuántas temperaturas se deben tomar en las voladuras que presentan pozos calientes?",
+        options: [
+          "No se toma ninguna y se debe Cargar normalmente",
+          "1 temperatura, con eso se garantiza el proceso",
+          "3 temperaturas, Temperatura 1: con pistola termica, temperatura 2: con termocupla calibrada, temperatura 3: monitor de rayos infrarrojos",
+          "Se deben Marcar como fríos y realizar cebado"
+        ],
+        correct: 2,
+        explanation: "Deben tomarse 3 temperaturas según el protocolo."
+      },
+      // Nuevas F/V para nivel 1
+      {
+        text: "¿Se debe contar con el procedimiento y estándares (Cargue de Pozos – PRO-PD-PV-V003) para la actividad?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Siempre se debe contar con el procedimiento y estándares vigentes para la actividad."
+      },
+      {
+        text: "¿Se debe diligenciar el TOMA 5 o ASST durante la ejecución de la tarea?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "El TOMA 5/ASST es obligatorio para la gestión de riesgos de la tarea."
+      },
+      {
+        text: "¿Es necesario que todos los operadores e involucrados en la tarea conozcan los riesgos a los que se exponen?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Todo el personal debe conocer los riesgos para poder controlarlos."
+      },
+      {
+        text: "¿Se requiere contar con un Supervisor en el área de cargue o Coordinador de voladuras permanente mientras se ejecuta la tarea?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "La presencia de supervisión es clave para controlar la tarea y los riesgos asociados."
+      },
+      {
+        text: "¿Se debe informar al Superintendente de P&V de la actividad a realizar en el cargue de pozos calientes?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "El Superintendente de P&V debe estar informado de las actividades críticas como el cargue de pozos calientes."
+      },
+      {
+        text: "¿Se debe informar al APS de Minería, APS de P&V y al grupo de Perforación y Voladuras sobre el cargue en pozos calientes?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "La comunicación con APS y los grupos involucrados es obligatoria en estas tareas."
+      }
+    ];
+
+    // Nivel 2 – Banco
+    const level2Bank = [
+      {
+        text: "¿A partir de qué rango de temperatura se debe diligenciar el permiso de cargue en área caliente?",
+        options: [
+          "Menos de 40 °C",
+          "40.1 a 45 °C",
+          "45.1 a 55 °C",
+          "70.1 a 80 °C"
+        ],
+        correct: 2,
+        explanation: "El protocolo indica que a partir de 45.1 a 55 °C se requiere permiso de cargue en área caliente."
+      },
+      {
+        text: "En el rango 45.1 a 55 °C, ¿qué instrumentos de medición se usan para garantizar la toma de temperaturas?",
+        options: [
+          "Solo pistola térmica",
+          "Pistola térmica y termocupla calibrada",
+          "Pistola térmica, termocupla calibrada y monitor de rayos infrarrojos (IR) calibrado",
+          "Solo termocupla"
+        ],
+        correct: 2,
+        explanation: "Se usan pistola térmica, termocupla calibrada y monitor IR calibrado."
+      },
+      {
+        text: "En el rango 45.1 a 55 °C, ¿con qué color de cinta se señalizan los pozos?",
+        options: [
+          "Cinta roja",
+          "Cinta roja con blanco",
+          "Cinta azul con blanco",
+          "No se usa cinta"
+        ],
+        correct: 0,
+        explanation: "Los pozos en este rango se señalizan con cinta ROJA."
+      },
+      {
+        text: "En el rango 45.1 a 55 °C, ¿cuándo debe realizarse el cargue?",
+        options: [
+          "En cualquier momento del día",
+          "Al inicio del turno del mismo día del disparo",
+          "Al finalizar el turno posterior al disparo",
+          "Un día antes del disparo sin restricción horaria"
+        ],
+        correct: 1,
+        explanation: "Debe cargarse al inicio del turno del mismo día del disparo."
+      },
+      {
+        text: "¿Qué se debe hacer con los pozos que presenten emanación de humo en el rango 45.1 a 55 °C?",
+        options: [
+          "Se pueden cargar si la temperatura baja",
+          "Solo se cargan con emulsión",
+          "No deben ser cargados",
+          "Se perforan nuevamente"
+        ],
+        correct: 2,
+        explanation: "Los pozos con emanación de humo no deben ser cargados."
+      },
+      {
+        text: "En el rango 45.1 a 55 °C, ¿quién debe liderar la tarea y verificar los controles durante todo el proceso?",
+        options: [
+          "Operador del camión de explosivos",
+          "Supervisor MPT liderando la tarea",
+          "Topógrafo de la mina",
+          "Ingeniero de planeación"
+        ],
+        correct: 1,
+        explanation: "El Supervisor MPT lidera la tarea y verifica los controles."
+      },
+      {
+        text: "¿Cuál es el objetivo principal de solicitar permiso de cargue en área caliente?",
+        options: [
+          "Optimizar tiempos de operación",
+          "Registrar la producción",
+          "Verificar controles adicionales de seguridad y gestionar el riesgo térmico para no tener ningún accidente",
+          "Reducir el consumo de emulsión"
+        ],
+        correct: 2,
+        explanation: "El permiso de área caliente asegura una gestión formal del riesgo por alta temperatura."
+      },
+      {
+        text: "Cuando estoy diligenciando el TOMA 5, ¿cómo debo marcar el tipo de actividad que representa el cargue de barrenos calientes?",
+        options: [
+          "Rutinaria",
+          "Actividad No Rutinaria",
+          "Todos los días me toca trabajar en pozos calientes",
+          "No lo debo diligenciar"
+        ],
+        correct: 1,
+        explanation: "Es una actividad No Rutinaria por el riesgo que implica."
+      },
+      {
+        text: "En el rango 55.1 a 70 °C, ¿qué color de cinta se utiliza para señalizar los pozos?",
+        options: [
+          "Roja",
+          "Roja con blanco",
+          "Azul con blanco",
+          "Verde"
+        ],
+        correct: 1,
+        explanation: "Los pozos de 55.1 a 70 °C se señalizan con cinta ROJA CON BLANCO."
+      },
+      {
+        text: "En el rango 55.1 a 70 °C, ¿en qué momento se puede iniciar el cargue de los barrenos?",
+        options: [
+          "El mismo día del disparo, 5 horas antes",
+          "Cualquier día antes del disparo",
+          "Después del disparo",
+          "24 horas antes del disparo"
+        ],
+        correct: 0,
+        explanation: "Se carga el mismo día del disparo, 5 horas antes."
+      },
+      // Nuevas F/V nivel 2
+      {
+        text: "¿Se debe informar del Cargue en Área Caliente al Grupo de rescate y Bomberos – CAE más cercano?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Los grupos de rescate y CAE deben estar informados para responder ante cualquier emergencia."
+      },
+      {
+        text: "¿Se requiere repasar el procedimiento de operación de los instrumentos de medición de temperatura (pistola, termosonda y monitor MK8)?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Repasar el procedimiento garantiza el uso correcto de los instrumentos de medición."
+      },
+      {
+        text: "¿Se debe verificar la calibración de la termocupla y del monitor MK8?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "La calibración de los equipos es necesaria para asegurar lecturas confiables."
+      },
+      {
+        text: "¿Es necesario tomar tres (3) mediciones de temperaturas y anotarlas en las estacas del pozo antes de cargar los explosivos?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Las tres mediciones y su registro permiten evidenciar el comportamiento térmico del pozo."
+      },
+      {
+        text: "¿Se debe realizar la tercera medición de la temperatura con el monitor MK8 por parte del equipo QAQC o delegado por la superintendencia?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "La tercera medición debe ser verificada por QAQC o delegado para asegurar el control."
+      },
+      {
+        text: "¿Se deben identificar los pozos a cargar con estacas y cintas de colores según procedimiento PRO-PD-PV-V003?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "La identificación con estacas y cintas de colores es obligatoria según el procedimiento."
+      }
+    ];
+
+    // Nivel 3 – Banco
+    const level3Bank = [
+      {
+        text: "En el rango 55.1 a 70 °C, ¿cuál es el número máximo de pozos que se pueden cargar?",
+        options: [
+          "Sin límite",
+          "100 pozos",
+          "50 pozos",
+          "10 pozos"
+        ],
+        correct: 2,
+        explanation: "Se establece un máximo de 50 pozos para este rango de temperatura."
+      },
+      {
+        text: "En el rango 55.1 a 70 °C, ¿cómo se debe realizar el cebado con Top Prime?",
+        options: [
+          "Sin cordón detonante",
+          "Solo con nonel",
+          "Cargar primero con emulsión y luego Cebar con cordón detonante y booster con doble lastre",
+          "No se usa Top Prime"
+        ],
+        correct: 2,
+        explanation: "Top Prime debe cebarse con cordón detonante y booster según el protocolo."
+      },
+      {
+        text: "En el rango 55.1 a 70 °C, si el diseño contempla un segundo cargue, ¿qué se debe hacer?",
+        options: [
+          "Mantener ambos cargues",
+          "Aumentar el segundo cargue",
+          "Anular el segundo cargue",
+          "Solo cargar el segundo"
+        ],
+        correct: 2,
+        explanation: "En este rango se debe anular el segundo cargue si lo llevaba."
+      },
+      {
+        text: "En el rango 55.1 a 70 °C, ¿cómo se debe tapar el barreno?",
+        options: [
+          "Con 1 metro de material de tapado con pala para proteger el cordon detonante de algún corte",
+          "No se tapa",
+          "Con 10 cm de material",
+          "Con agua"
+        ],
+        correct: 0,
+        explanation: "Los pozos deben taparse con 1 metro de material de tapado con pala."
+      },
+      {
+        text: "¿Qué se debe hacer con los pozos que muestren emanación de humo en el rango 55.1 a 70 °C?",
+        options: [
+          "Cargarlos con menos explosivo",
+          "Solo marcarlos",
+          "No deben ser cargados",
+          "Perforar nuevos pozos encima"
+        ],
+        correct: 2,
+        explanation: "Los pozos con humo no deben ser cargados; representan riesgo."
+      },
+      {
+        text: "En el rango 70.1 a 80 °C, ¿qué indica el protocolo respecto al uso de FP COAL?",
+        options: [
+          "Debe usarse en todos los pozos sin excepción",
+          "No se puede usar FP COAL",
+          "Se usa FP COAL y, si la temperatura baja a 70 °C o menos, se puede cargar según el rango anterior (55.1–70 °C)",
+          "Solo se usa en pozos fríos"
+        ],
+        correct: 2,
+        explanation: "Se permite FP COAL y, si baja a 70 °C o menos, se aplica el criterio del rango 55.1–70 °C."
+      },
+      {
+        text: "En el rango 70.1 a 80 °C, ¿con qué cinta se señalizan los pozos?",
+        options: [
+          "Roja",
+          "Roja con blanco",
+          "Azul con blanco",
+          "Verde con blanco"
+        ],
+        correct: 2,
+        explanation: "En este rango se usa cinta AZUL CON BLANCO."
+      },
+      {
+        text: "Cuando la temperatura del barreno es mayor a 80.1 °C, ¿qué acciones se deben establecer?",
+        options: [
+          "Cargar con restricciones y monitoreo",
+          "No cargar y tapar",
+          "Cargar solo con emulsión fría",
+          "Bajar el nivel del explosivo"
+        ],
+        correct: 1,
+        explanation: "Por encima de 80.1 °C se indica NO CARGAR y TAPAR el pozo."
+      },
+      {
+        text: "Por encima de 80.1 °C, la instrucción de 'No cargar y tapar' busca principalmente:",
+        options: [
+          "Aumentar la productividad",
+          "Evitar la descomposición térmica del explosivo y minimizar el riesgo de incidente",
+          "Reducir costos de explosivos",
+          "Facilitar el trabajo del operador"
+        ],
+        correct: 1,
+        explanation: "El objetivo es controlar el riesgo por temperatura excesiva del barreno."
+      },
+      {
+        text: "Una Voladura presenta varios pozos entre 45.1–55 °C señalizados en rojo con blanco y otros entre 55.1–70 °C señalizados en rojo. ¿Qué se debe hacer en este caso?",
+        options: [
+          "Todos los pozos tienen el mismo tratamiento",
+          "Informar al supervisor, verificar nuevamente las temperaturas y corregir el color de cinta que corresponda para aplicar las restricciones correctas según el protocolo",
+          "Los rojos con blanco no se pueden cargar",
+          "Los colores son solo decorativos"
+        ],
+        correct: 1,
+        explanation: "Cada color indica un rango y unas restricciones diferentes que deben respetarse."
+      },
+      // Nuevas F/V nivel 3
+      {
+        text: "¿Se debe contar con todos los elementos de protección personal especiales para la tarea? (Protección auditiva, guantes para alta temperatura, máscara antigases si aplica)",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Los EPP especiales son obligatorios para esta tarea por el riesgo térmico y de gases."
+      },
+      {
+        text: "¿Se debe contar con radio de comunicación de doble vía o medio de comunicación adecuado y verificar su funcionamiento?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "La comunicación efectiva es crítica en caso de emergencia o condición insegura."
+      },
+      {
+        text: "¿Se debe contar con plan de respuesta ante emergencias y procedimiento de rescate aprobados?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "El plan de respuesta y rescate debe estar definido y aprobado antes de la actividad."
+      },
+      {
+        text: "¿Se debe realizar un plan de bloqueos para casos de emergencia temporal usando al personal de Perforación y Voladuras hasta que se establezcan los bloqueos oficiales asociados al proceso BED?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "El plan de bloqueos temporales es fundamental mientras se formalizan los bloqueos oficiales."
+      },
+      {
+        text: "¿Se debe repasar el procedimiento de evacuación en caso de emergencia?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Todo el personal debe conocer claramente el procedimiento de evacuación."
+      },
+      {
+        text: "¿Se debe divulgar al personal involucrado en la tarea que se debe aplicar el plan de respuesta de emergencias ante la presencia de pozos con emanación de humos blancos y/o naranjas?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "La presencia de humos blancos o naranjas activa el plan de respuesta de emergencias."
+      },
+      // Preguntas de opciones varias (no F/V)
+      {
+        text: "¿Cómo se reporta una emergencia?",
+        options: [
+          "Solo indicando el lugar de la emergencia",
+          "Con el nombre de quien reporta, el tipo de emergencia y el lugar exacto de la emergencia",
+          "Únicamente llamando a la base 1 sin más detalles",
+          "Enviando un mensaje de texto sin datos específicos"
+        ],
+        correct: 1,
+        explanation: "Debe reportarse indicando quién reporta, el tipo de emergencia y el lugar exacto."
+      },
+      {
+        text: "¿A quién debo reportar la emergencia de acuerdo al flujograma de información en caso que se presente?",
+        options: [
+          "Al compañero más cercano",
+          "Al operador de pala y al topógrafo",
+          "A la central de información, base 1 y supervisor de turno",
+          "Solo al jefe de seguridad industrial"
+        ],
+        correct: 2,
+        explanation: "El flujograma indica reportar a la central de información, base 1 y supervisor de turno."
+      },
+      // === Nuevas preguntas añadidas ===
+      {
+        text: "¿Debo tener claro dónde es el punto de encuentro en caso de una emergencia?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Todos los trabajadores deben conocer el punto de encuentro para garantizar una evacuación segura."
+      },
+      {
+        text: "¿Si estoy en el área de trabajo y soy una de las personas que estoy ejecutando la tarea de cargue de voladura en áreas calientes, debo firmar el permiso de trabajo?",
+        options: ["Verdadero", "Falso"],
+        correct: 0,
+        explanation: "Todo el personal involucrado directamente en la actividad debe firmar el permiso de trabajo."
+      },
+      {
+        text: "¿Si ya tomé las 3 temperaturas que dice el protocolo pero la segunda temperatura me arrojó mayor que la tercera, cuál debo tomar finalmente para el proceso y tener la seguridad de cargarlo sin inconvenientes?",
+        options: [
+          "La temperatura menor para evitar restricciones",
+          "La primera temperatura tomada",
+          "Se debe tomar al final la temperatura mayor para iniciar el cargue y aplicar restricciones según el rango en que se encuentre",
+          "Se deben promediar las medidas"
+        ],
+        correct: 2,
+        explanation: "Se debe usar la temperatura mayor registrada para aplicar correctamente las restricciones del protocolo."
+      }
+    ];
+
+    const levels = {
+      1: level1Bank,
+      2: level2Bank,
+      3: level3Bank
+    };
+
+    // ===== FUNCIONES UTILITARIAS =====
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function sampleQuestions(bank, count) {
+      const shuffled = shuffleArray(bank);
+      return shuffled.slice(0, Math.min(count, shuffled.length));
+    }
+
+    // ===== CERTIFICADO PDF =====
+    function generateCertificatePDF(name, id) {
+      if (!window.jspdf) {
+        console.error("jsPDF no está disponible.");
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("CERTIFICADO DE APROBACIÓN", 105, 30, { align: "center" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
+      const text = `Se certifica que ${name} (Cédula: ${id}) ha aprobado satisfactoriamente el Test de Protocolo de cargue en Barrenos Calientes, completando los tres niveles con el 100% de las preguntas correctas.`;
+      const splitText = doc.splitTextToSize(text, 170);
+      doc.text(splitText, 20, 50);
+
+      const dateStr = new Date().toLocaleDateString();
+      doc.text(`Fecha: ${dateStr}`, 20, 100);
+
+      doc.line(20, 140, 100, 140);
+      doc.text("Firma Supervisor", 25, 147);
+
+      const safeName = (name || "participante")
+        .replace(/[^a-zA-Z0-9ÁÉÍÓÚáéíóúñÑ ]/g, "")
+        .replace(/\s+/g, "_");
+
+      doc.save(`Certificado_${safeName}.pdf`);
+    }
+
+    // ===== INTERFAZ / TIMER =====
+    function updateTimerDisplay() {
+      if (!currentLevel) {
+        timerDiv.textContent = "Ingresa tu nombre, cédula, valida el acceso y selecciona un nivel para iniciar.";
+        return;
+      }
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      const mm = String(minutes).padStart(2, "0");
+      const ss = String(seconds).padStart(2, "0");
+      timerDiv.textContent = `Nivel ${currentLevel} – Tiempo restante: ${mm}:${ss}`;
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      remainingSeconds = LEVEL_TIME_SECONDS;
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        if (remainingSeconds <= 0) {
+          remainingSeconds = 0;
+          updateTimerDisplay();
+          clearInterval(timerInterval);
+          gradeCurrentLevel(true); // auto-calificar por tiempo
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+
+    function renderLevelPanel() {
+      levelPanel.innerHTML = "";
+      for (let lvl = 1; lvl <= 3; lvl++) {
+        const card = document.createElement("div");
+        card.className = "level-card";
+
+        const title = document.createElement("h2");
+        title.textContent = `Nivel ${lvl}`;
+        card.appendChild(title);
+
+        const statusP = document.createElement("p");
+        statusP.className = "level-status";
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+
+        let isUnlocked = false;
+        let isDone = passedLevels[lvl];
+
+        if (lvl === 1) {
+          isUnlocked = true;
+        } else if (passedLevels[lvl - 1]) {
+          isUnlocked = true;
+        }
+
+        if (!isUnlocked) {
+          badge.classList.add("badge-locked");
+          badge.textContent = "Bloqueado";
+          statusP.appendChild(badge);
+          statusP.appendChild(document.createTextNode(" – Debes aprobar el nivel anterior con 10/10."));
+        } else if (isDone) {
+          badge.classList.add("badge-done");
+          badge.textContent = "Completado";
+          const res = levelResults[lvl];
+          const txt = res ? ` – Aprobado con ${res.score}/${res.total}` : " – Aprobado.";
+          statusP.appendChild(badge);
+          statusP.appendChild(document.createTextNode(txt));
+        } else {
+          badge.classList.add("badge-open");
+          badge.textContent = "Disponible";
+          statusP.appendChild(badge);
+          statusP.appendChild(document.createTextNode(" – Listo para iniciar."));
+        }
+
+        card.appendChild(statusP);
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = isDone ? "Repetir nivel" : "Iniciar nivel";
+        btn.className = "btn-level";
+        if (!isUnlocked) {
+          btn.disabled = true;
+        } else {
+          btn.addEventListener("click", () => {
+            startLevel(lvl);
+          });
+        }
+        card.appendChild(btn);
+
+        levelPanel.appendChild(card);
+      }
+    }
+
+    function renderQuestionsForCurrentLevel() {
+      form.innerHTML = "";
+      currentQuestions.forEach((q, index) => {
+        const qDiv = document.createElement("div");
+        qDiv.className = "question";
+        qDiv.id = `q-${index}`;
+
+        const title = document.createElement("h3");
+        title.textContent = `${index + 1}. ${q.text}`;
+        qDiv.appendChild(title);
+
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "options";
+
+        q.options.forEach((option, i) => {
+          const label = document.createElement("label");
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `question-${index}`;
+          input.value = i;
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(" " + option));
+          optionsDiv.appendChild(label);
+        });
+
+        qDiv.appendChild(optionsDiv);
+        form.appendChild(qDiv);
+      });
+    }
+
+    function disableFormInputs() {
+      form.querySelectorAll("input[type='radio']").forEach((input) => {
+        input.disabled = true;
+      });
+    }
+
+    function enableFormInputs() {
+      form.querySelectorAll("input[type='radio']").forEach((input) => {
+        input.disabled = false;
+      });
+    }
+
+    // ===== LOGIN: VALIDAR CÉDULA =====
+    btnLogin.addEventListener("click", () => {
+      const nameVal = userNameInput.value.trim();
+      const idVal = userIdInput.value.trim();
+      loginStatusSpan.className = "";
+
+      if (!nameVal || !idVal) {
+        alert("Por favor ingresa tu nombre completo y cédula para validar el acceso.");
+        loginStatusSpan.textContent = "Debes ingresar nombre y cédula.";
+        loginStatusSpan.classList.add("error");
+        isAuthenticated = false;
+        levelPanel.style.display = "none";
+        return;
+      }
+
+      if (!allowedIds.includes(idVal)) {
+        alert("Tu cédula no se encuentra habilitada para realizar este curso. Contacta al supervisor.");
+        loginStatusSpan.textContent = "Acceso denegado. Cédula no habilitada.";
+        loginStatusSpan.classList.add("error");
+        isAuthenticated = false;
+        levelPanel.style.display = "none";
+        return;
+      }
+
+      isAuthenticated = true;
+      loginStatusSpan.textContent = "Acceso autorizado. Ya puedes presentar el test.";
+      loginStatusSpan.classList.add("ok");
+      levelPanel.style.display = "grid";
+      renderLevelPanel();
+    });
+
+    // ===== FLUJO DE NIVELES =====
+    function startLevel(level) {
+      const nameVal = userNameInput.value.trim();
+      const idVal = userIdInput.value.trim();
+
+      if (!isAuthenticated) {
+        alert("No tienes acceso autorizado. Valida tu cédula antes de iniciar el examen.");
+        return;
+      }
+
+      if (!nameVal || !idVal) {
+        alert("Por favor ingresa tu nombre completo y cédula antes de iniciar el examen.");
+        return;
+      }
+
+      currentLevel = level;
+      resultDiv.textContent = "";
+
+      // elegir 10 preguntas aleatorias del banco del nivel
+      const bank = levels[level];
+      currentQuestions = sampleQuestions(bank, QUESTIONS_PER_LEVEL);
+
+      renderQuestionsForCurrentLevel();
+      enableFormInputs();
+      btnSubmit.disabled = false;
+      btnReset.disabled = false;
+      startTimer();
+    }
+
+    function gradeCurrentLevel(fromTimer = false) {
+      if (!currentLevel) return;
+      if (!fromTimer) {
+        stopTimer();
+      }
+
+      let score = 0;
+      const total = currentQuestions.length;
+
+      currentQuestions.forEach((q, index) => {
+        const questionDiv = document.getElementById(`q-${index}`);
+        if (!questionDiv) return;
+
+        // limpiar estilos previos
+        questionDiv.classList.remove("correct", "incorrect");
+        const oldExplanation = questionDiv.querySelector(".explanation");
+        if (oldExplanation) oldExplanation.remove();
+
+        const selected = form.querySelector(
+          `input[name="question-${index}"]:checked`
+        );
+
+        const explanation = document.createElement("div");
+        explanation.className = "explanation";
+
+        if (!selected) {
+          explanation.textContent = "No respondiste esta pregunta. " + q.explanation;
+          questionDiv.classList.add("incorrect");
+        } else if (parseInt(selected.value, 10) === q.correct) {
+          score++;
+          explanation.textContent = "Correcto. " + q.explanation;
+          questionDiv.classList.add("correct");
+        } else {
+          explanation.textContent =
+            'Respuesta incorrecta. La opción correcta era: "' +
+            q.options[q.correct] +
+            '". ' +
+            q.explanation;
+          questionDiv.classList.add("incorrect");
+        }
+
+        questionDiv.appendChild(explanation);
+      });
+
+      disableFormInputs();
+      btnSubmit.disabled = true;
+
+      const ratio = score / total;
+      const passed = ratio >= MIN_PASS_RATIO; // aquí es 100%
+
+      levelResults[currentLevel] = {score, total, passed};
+
+      const nameVal = userNameInput.value.trim() || "Participante";
+
+      if (passed) {
+        passedLevels[currentLevel] = true;
+
+        if (currentLevel < 3) {
+          resultDiv.textContent =
+            `Nivel ${currentLevel}: Aprobado con ${score} de ${total} preguntas correctas. ` +
+            `Has desbloqueado el siguiente nivel.`;
+        } else {
+          // Nivel 3 aprobado
+          resultDiv.textContent =
+            `Nivel ${currentLevel}: Aprobado con ${score} de ${total} preguntas correctas. ` +
+            `Felicidades ${nameVal}, has superado con éxito los tres niveles del examen.`;
+
+          const idVal = userIdInput.value.trim();
+          generateCertificatePDF(nameVal, idVal);
+        }
+      } else {
+        resultDiv.textContent =
+          `Nivel ${currentLevel}: NO aprobado. Obtuviste ${score} de ${total}. ` +
+          `Debes responder correctamente las ${total} preguntas (100%) para desbloquear el siguiente nivel.`;
+      }
+
+      renderLevelPanel();
+    }
+
+    // Eventos botones
+    btnSubmit.addEventListener("click", () => gradeCurrentLevel(false));
+    btnReset.addEventListener("click", () => {
+      if (!currentLevel) return;
+      stopTimer();
+      // nuevo set aleatorio de preguntas al reiniciar
+      const bank = levels[currentLevel];
+      currentQuestions = sampleQuestions(bank, QUESTIONS_PER_LEVEL);
+      renderQuestionsForCurrentLevel();
+      enableFormInputs();
+      btnSubmit.disabled = false;
+      resultDiv.textContent = "";
+      startTimer();
+    });
+
+    // Render inicial (panel vacío hasta login, pero estructurado)
+    renderLevelPanel();
+    updateTimerDisplay();
+  </script>
+</body>
+</html>
+
